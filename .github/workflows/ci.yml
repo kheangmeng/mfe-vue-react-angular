@@ -1,0 +1,49 @@
+name: Micro Frontend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate-apps:
+    name: Build & Verify (${{ matrix.app }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        app: 
+          - remote-angular
+          - remote-react
+          - remote-vue
+          - host
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies (${{ matrix.app }})
+        working-directory: ./${{ matrix.app }}
+        run: npm ci
+
+      - name: Run Tests (if available)
+        working-directory: ./${{ matrix.app }}
+        run: |
+          # Automatically skips if no test script is defined in package.json
+          if npm run | grep -q "test"; then
+            npm run test -- --ci --coverage=false
+          else
+            echo "No test script found, skipping tests."
+          fi
+
+      - name: Build Application (${{ matrix.app }})
+        working-directory: ./${{ matrix.app }}
+        run: npm run build
