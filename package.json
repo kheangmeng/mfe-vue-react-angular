@@ -1,0 +1,18 @@
+{
+  "name": "mfe-vite-federation",
+  "private": true,
+  "workspaces": [
+    "host",
+    "remote-react",
+    "remote-vue",
+    "remote-angular"
+  ],
+  "scripts": {
+    "dev": "concurrently -n host,react,vue,angular -c blue,cyan,green,red \"npm run dev -w host\" \"npm run dev -w remote-react\" \"npm run dev -w remote-vue\" \"npm run dev -w remote-angular\"",
+    "build": "npm run build -ws",
+    "preview": "concurrently \"npm run preview -w host\" \"npm run preview -w remote-react\" \"npm run preview -w remote-vue\" \"npm run preview -w remote-angular\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
