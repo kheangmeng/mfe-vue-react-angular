@@ -1,7 +1,6 @@
 import { createApplication } from '@angular/platform-browser'
 import {
   createComponent,
-  provideExperimentalZonelessChangeDetection,
 } from '@angular/core'
 import { AppComponent } from './app.component'
 
@@ -14,7 +13,7 @@ export async function mount(el: HTMLElement, props: Record<string, unknown> = {}
   // Zoneless: no zone.js, so Angular doesn't monkey-patch globals
   // (setTimeout, Promise, addEventListener...) shared with the other MFEs.
   const appRef = await createApplication({
-    providers: [provideExperimentalZonelessChangeDetection()],
+    providers: [],
   })
 
   const host = document.createElement('div')
