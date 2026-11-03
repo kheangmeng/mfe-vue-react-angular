@@ -9,7 +9,7 @@ interface Product { id: number; name: string; price: number }
   imports: [CurrencyPipe],
   template: `
     <section class="box">
-      <h2>🅰️ Checkout (Angular {{ version }})</h2>
+      <h2 class="text-xl font-bold">🅰️ Checkout (Angular {{ version }})</h2>
       <p>Customer: <strong>{{ user }}</strong></p>
 
       @if (items().length === 0) {

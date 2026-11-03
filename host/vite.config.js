@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
 import { federation } from '@module-federation/vite'
 
 // In production, override these with real URLs (e.g. via env vars / CI)
@@ -11,6 +12,7 @@ export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/mfe-vue-react-angular/' : '/',
   plugins: [
     vue(),
+    tailwindcss(),
     federation({
       name: 'host',
       dts: false,

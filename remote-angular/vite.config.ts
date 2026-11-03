@@ -1,11 +1,13 @@
 import { defineConfig } from 'vite'
 import angular from '@analogjs/vite-plugin-angular'
+import tailwindcss from '@tailwindcss/vite'
 import { federation } from '@module-federation/vite'
 
 export default defineConfig({
   plugins: [
     // Compiles Angular inside plain Vite (the Angular CLI can't host Vite plugins)
     angular({ tsconfig: './tsconfig.app.json' }),
+    tailwindcss(),
     federation({
       name: 'remote_angular',
       filename: 'remoteEntry.js',
