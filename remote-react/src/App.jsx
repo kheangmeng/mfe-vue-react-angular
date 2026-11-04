@@ -17,7 +17,7 @@ export default function App({ user = 'guest' }) {
 
   return (
     <section style={{ border: '2px solid #61dafb', borderRadius: 8, padding: 16 }}>
-      <h2 className="text-xl font-bold">⚛️ Products (React {React.version})</h2>
+      <h2 className="text-xl font-bold text-blue-500">⚛️ Products (React {React.version})</h2>
       <p>Browsing as <strong>{user}</strong></p>
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {PRODUCTS.map((p) => (

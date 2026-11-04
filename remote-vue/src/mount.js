@@ -1,3 +1,4 @@
+import './style.css'
 import { createApp, reactive, h } from 'vue'
 import App from './App.vue'
 

@@ -21,7 +21,7 @@ onBeforeUnmount(() => {
 
 <template>
   <section class="cart">
-    <h2 class="text-xl font-bold">🟢 Cart (Vue {{ version }})</h2>
+    <h2 class="text-xl font-bold text-green-500">🟢 Cart (Vue {{ version }})</h2>
     <p>Owner: <strong>{{ user }}</strong></p>
     <p v-if="!items.length">Cart is empty. Add something from the React app!</p>
     <ul v-else>

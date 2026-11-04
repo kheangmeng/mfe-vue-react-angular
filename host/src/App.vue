@@ -1,6 +1,6 @@
 <template>
   <header class="nav">
-    <strong>🧩 MFE Shell (Vue host)</strong>
+    <strong class="text-purple-500">🧩 MFE Shell (Vue host)</strong>
     <router-link to="/">Home</router-link>
     <router-link to="/products">Products (React)</router-link>
     <router-link to="/cart">Cart (Vue)</router-link>

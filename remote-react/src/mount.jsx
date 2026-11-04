@@ -1,3 +1,4 @@
+import './index.css';
 import React from 'react'
 import './refresh-preamble.js'
 import { createRoot } from 'react-dom/client'

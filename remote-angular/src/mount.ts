@@ -1,3 +1,5 @@
+// @ts-ignore CSS is loaded by the bundler; TypeScript has no declaration for it.
+import './index.css';
 import { createApplication } from '@angular/platform-browser'
 import {
   createComponent,
