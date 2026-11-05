@@ -3,13 +3,21 @@ import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import { federation } from '@module-federation/vite'
 
+const getBasePath = () => {
+  return process.env.NODE_ENV === 'production' ? '/mfe-vue-react-angular/' : '/'
+}
+
 // In production, override these with real URLs (e.g. via env vars / CI)
-const REACT_URL = process.env.REMOTE_REACT_URL || 'http://localhost:8081/remoteEntry.js'
-const VUE_URL = process.env.REMOTE_VUE_URL || 'http://localhost:8082/remoteEntry.js'
-const ANGULAR_URL = process.env.REMOTE_ANGULAR_URL || 'http://localhost:8083/remoteEntry.js'
+// const REACT_URL = process.env.REMOTE_REACT_URL || 'http://localhost:8081/mfe-vue-react-angular/remoteEntry.js'
+// const VUE_URL = process.env.REMOTE_VUE_URL || 'http://localhost:8082/mfe-vue-react-angular/remoteEntry.js'
+// const ANGULAR_URL = process.env.REMOTE_ANGULAR_URL || 'http://localhost:8083/mfe-vue-react-angular/remoteEntry.js'
+
+const REACT_URL = process.env.REMOTE_REACT_URL || `http://localhost:8081${getBasePath()}remoteEntry.js`
+const VUE_URL = process.env.REMOTE_VUE_URL || `http://localhost:8082${getBasePath()}remoteEntry.js`
+const ANGULAR_URL = process.env.REMOTE_ANGULAR_URL || `http://localhost:8083${getBasePath()}remoteEntry.js`
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/mfe-vue-react-angular/' : '/',
+  base: getBasePath(),
   plugins: [
     vue(),
     tailwindcss(),
