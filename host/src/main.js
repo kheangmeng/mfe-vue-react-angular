@@ -32,7 +32,7 @@ const AngularCheckout = {
 }
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(process.env.NODE_ENV === 'production' ? '/mfe-vue-react-angular/' : '/'),
   routes: [
     { path: '/', component: Home },
     { path: '/products', component: ReactProducts },
