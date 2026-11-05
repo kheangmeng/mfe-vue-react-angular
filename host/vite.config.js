@@ -9,7 +9,7 @@ const VUE_URL = process.env.REMOTE_VUE_URL || 'http://localhost:8082/remoteEntry
 const ANGULAR_URL = process.env.REMOTE_ANGULAR_URL || 'http://localhost:8083/remoteEntry.js'
 
 export default defineConfig({
-  base: '/',
+  base: process.env.NODE_ENV === 'production' ? '/mfe-vue-react-angular/' : '/',
   plugins: [
     vue(),
     tailwindcss(),
