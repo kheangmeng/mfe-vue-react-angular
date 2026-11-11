@@ -3,6 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
+    paths:
+      - host/**
+      - package.json
+      - package-lock.json
+      - .github/workflows/deploy-host.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,6 +18,14 @@ permissions:
 concurrency:
   group: "pages"
   cancel-in-progress: true
+
+env:
+  NODE_VERSION: 22
+  SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
+  REMOTE_REACT_URL: ${{ vars.REMOTE_REACT_URL }}
+  REMOTE_VUE_URL: ${{ vars.REMOTE_VUE_URL }}
+  REMOTE_ANGULAR_URL: ${{ vars.REMOTE_ANGULAR_URL }}
+  REMOTE_NUXT_URL: ${{ vars.REMOTE_NUXT_URL }}
 
 jobs:
   build:
@@ -25,14 +39,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
       - name: Install Dependencies & Build
-        working-directory: ./host
+        # working-directory: ./host
         run: |
-          npm ci
-          npm run build
+          npm ci -w host --include-workspace-root --ignore-scripts
+          npm run build -w host
+
+      - name: SPA fallback (404.html) and .nojekyll
+        run: |
+          cp host/dist/index.html host/dist/404.html
+          touch host/dist/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -40,7 +59,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './host/dist'
+          path: 'host/dist'
 
   deploy:
     name: Deploy to GitHub Pages
