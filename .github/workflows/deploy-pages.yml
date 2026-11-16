@@ -1,14 +1,9 @@
-name: Deploy Host to GitHub Pages
+name: Deploy Host & Remotes to GitHub Pages
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'host/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -22,7 +17,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build Host Project
+    name: Build All Apps
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -37,17 +32,39 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build Remote React
+        run: npm run build -w remote-react
+        env:
+          NODE_ENV: production
+          BASE_PATH: /${{ github.event.repository.name }}/remote-react/
+
+      - name: Build Remote Vue
+        run: npm run build -w remote-vue
+        env:
+          NODE_ENV: production
+          BASE_PATH: /${{ github.event.repository.name }}/remote-vue/
+
+      - name: Build Remote Angular
+        run: npm run build -w remote-angular
+        env:
+          NODE_ENV: production
+          BASE_PATH: /${{ github.event.repository.name }}/remote-angular/
+
       - name: Build Host application
         run: npm run build -w host
         env:
           NODE_ENV: production
           BASE_PATH: /${{ github.event.repository.name }}/
-          REMOTE_REACT_URL: ${{ vars.REMOTE_REACT_URL }}
-          REMOTE_VUE_URL: ${{ vars.REMOTE_VUE_URL }}
-          REMOTE_ANGULAR_URL: ${{ vars.REMOTE_ANGULAR_URL }}
+          REMOTE_REACT_URL: /${{ github.event.repository.name }}/remote-react/remoteEntry.js
+          REMOTE_VUE_URL: /${{ github.event.repository.name }}/remote-vue/remoteEntry.js
+          REMOTE_ANGULAR_URL: /${{ github.event.repository.name }}/remote-angular/remoteEntry.js
 
-      - name: Setup SPA 404 fallback and disable Jekyll
+      - name: Assemble remotes into host dist
         run: |
+          mkdir -p host/dist/remote-react host/dist/remote-vue host/dist/remote-angular
+          cp -r remote-react/dist/* host/dist/remote-react/
+          cp -r remote-vue/dist/* host/dist/remote-vue/
+          cp -r remote-angular/dist/* host/dist/remote-angular/
           cp host/dist/index.html host/dist/404.html
           touch host/dist/.nojekyll
 
@@ -67,3 +84,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        
