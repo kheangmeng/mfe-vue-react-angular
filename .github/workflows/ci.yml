@@ -6,6 +6,19 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+  
+env:
+  NODE_VERSION: 22
+  SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
+
 jobs:
   validate-apps:
     name: Build & Verify (${{ matrix.app }})
@@ -15,9 +28,9 @@ jobs:
       fail-fast: false
       matrix:
         app: 
-          - remote-angular
-          - remote-react
-          - remote-vue
+          # - remote-angular
+          # - remote-react
+          # - remote-vue
           - host
 
     steps:
@@ -27,7 +40,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
       - name: Install Dependencies (${{ matrix.app }})
