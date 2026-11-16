@@ -4,6 +4,9 @@ import tailwindcss from '@tailwindcss/vite'
 import { federation } from '@module-federation/vite'
 
 const getBasePath = () => {
+  if (process.env.BASE_PATH) {
+    return process.env.BASE_PATH
+  }
   return process.env.NODE_ENV === 'production' ? '/mfe-vue-react-angular/' : '/'
 }
 

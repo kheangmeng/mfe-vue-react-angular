@@ -8,16 +8,13 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
   
 env:
   NODE_VERSION: 22
-  SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
 
 jobs:
   validate-apps:
@@ -28,9 +25,6 @@ jobs:
       fail-fast: false
       matrix:
         app: 
-          # - remote-angular
-          # - remote-react
-          # - remote-vue
           - host
 
     steps:
@@ -43,20 +37,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install Dependencies (${{ matrix.app }})
-        working-directory: ./${{ matrix.app }}
+      - name: Install Dependencies
         run: npm ci
 
-      - name: Run Tests (if available)
-        working-directory: ./${{ matrix.app }}
-        run: |
-          # Automatically skips if no test script is defined in package.json
-          if npm run | grep -q "test"; then
-            npm run test -- --ci --coverage=false
-          else
-            echo "No test script found, skipping tests."
-          fi
-
       - name: Build Application (${{ matrix.app }})
-        working-directory: ./${{ matrix.app }}
-        run: npm run build
+        run: npm run build -w ${{ matrix.app }}

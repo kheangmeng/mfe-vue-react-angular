@@ -1,13 +1,14 @@
-name: Deploy to GitHub Pages
+name: Deploy Host to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths:
-      - host/**
-      - package.json
-      - package-lock.json
-      - .github/workflows/deploy-pages.yml
+      - 'host/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -16,47 +17,41 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
-env:
-  NODE_VERSION: 22
-  SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
-  REMOTE_REACT_URL: ${{ vars.REMOTE_REACT_URL }}
-  REMOTE_VUE_URL: ${{ vars.REMOTE_VUE_URL }}
-  REMOTE_ANGULAR_URL: ${{ vars.REMOTE_ANGULAR_URL }}
-  REMOTE_NUXT_URL: ${{ vars.REMOTE_NUXT_URL }}
+  group: 'pages'
+  cancel-in-progress: false
 
 jobs:
   build:
-    name: Build Application
+    name: Build Host Project
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: 22
           cache: 'npm'
 
-      - name: Install Dependencies & Build
-        # working-directory: ./host
-        run: |
-          npm ci -w host --include-workspace-root --ignore-scripts
-          npm run build -w host
+      - name: Install dependencies
+        run: npm ci
 
-      - name: SPA fallback (404.html) and .nojekyll
+      - name: Build Host application
+        run: npm run build -w host
+        env:
+          NODE_ENV: production
+          BASE_PATH: /${{ github.event.repository.name }}/
+          REMOTE_REACT_URL: ${{ vars.REMOTE_REACT_URL }}
+          REMOTE_VUE_URL: ${{ vars.REMOTE_VUE_URL }}
+          REMOTE_ANGULAR_URL: ${{ vars.REMOTE_ANGULAR_URL }}
+
+      - name: Setup SPA 404 fallback and disable Jekyll
         run: |
           cp host/dist/index.html host/dist/404.html
           touch host/dist/.nojekyll
 
-      # - name: Setup Pages
-      #   uses: actions/configure-pages@v4
-
-      - name: Upload Artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: host/dist
